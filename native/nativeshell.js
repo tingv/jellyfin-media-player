@@ -8,6 +8,7 @@ const features = [
     "externallinks",
     "clientsettings",
     "multiserver",
+    "exitmenu",
     "remotecontrol",
     "fullscreenchange",
     "filedownload",
@@ -63,6 +64,7 @@ window.NativeShell = {
 function getDeviceProfile() {
     return {
         'Name': 'Terminus Player',
+        'MaxStaticBitrate': 1000000000,
         'MusicStreamingTranscodingBitrate': 1280000,
         'TimelineOffsetSeconds': 5,
         'TranscodingProfiles': [
@@ -131,6 +133,9 @@ window.NativeShell.AppHost = {
     },
     deviceName() {
         return viewdata.deviceName;
+    },
+    exit() {
+        window.api.system.exit();
     }
 };
 
@@ -165,7 +170,7 @@ async function showSettingsModal() {
     const modalContents = document.createElement("div");
     modalContents.className = "formDialogContent smoothScrollY";
     modalContents.style.paddingTop = "2em";
-    modalContents.style.paddingBottom = "10em";
+    modalContents.style.marginBottom = "6.2em";
     modalContainer2.appendChild(modalContents);
     
     for (let section of settings) {
