@@ -27,14 +27,14 @@ jobs:
         ninja install
     - name: Fix library paths and create dmg
       run: |
-        python3 ./scripts/fix-install-names.py ./build/output/Terminus\ Media\ Player.app
+        python3 ./scripts/fix-install-names.py "./build/output/Terminus Player.app"
         brew install create-dmg
-        create-dmg --volname "Terminus Media Player" --no-internet-enable "TerminusMediaPlayer.dmg" "./build/output/Terminus Media Player.app"
+        create-dmg --volname "Terminus Player" --no-internet-enable "TerminusPlayer.dmg" "./build/output/Terminus Player.app"
     - name: Archive production artifacts
       uses: actions/upload-artifact@v2
       with:
         name: macos
-        path: ${{ github.workspace }}/TerminusMediaPlayer.dmg
+        path: ${{ github.workspace }}/TerminusPlayer.dmg
         
   build-win64:
     runs-on: windows-latest
