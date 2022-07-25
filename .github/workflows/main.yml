@@ -1,11 +1,9 @@
 name: build
 
 on:
-  push:
-    branches:
-      - release
-      - prerelease
-      - test
+  workflow_dispatch:
+  repository_dispatch:
+
 jobs:
   build-mac:
     runs-on: macos-10.15
@@ -23,20 +21,20 @@ jobs:
         brew install ninja mpv
     - name: Release build
       run: |
-        ./download_webclient.sh
+        ./download_terminus_webclient.sh
         cd build
         cmake -GNinja -DQTROOT=$Qt5_DIR -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=output ..
         ninja install
     - name: Fix library paths and create dmg
       run: |
-        python3 ./scripts/fix-install-names.py ./build/output/Jellyfin\ Media\ Player.app
+        python3 ./scripts/fix-install-names.py ./build/output/Terminus\ Media\ Player.app
         brew install create-dmg
-        create-dmg --volname "Jellyfin Media Player" --no-internet-enable "JellyfinMediaPlayer.dmg" "./build/output/Jellyfin Media Player.app"
+        create-dmg --volname "Terminus Media Player" --no-internet-enable "TerminusMediaPlayer.dmg" "./build/output/Terminus Media Player.app"
     - name: Archive production artifacts
       uses: actions/upload-artifact@v2
       with:
         name: macos
-        path: ${{ github.workspace }}/JellyfinMediaPlayer.dmg
+        path: ${{ github.workspace }}/TerminusMediaPlayer.dmg
         
   build-win64:
     runs-on: windows-latest
@@ -50,7 +48,7 @@ jobs:
         modules: "qtwebengine"
     - name: Install dependencies
       run: |
-        ./download_webclient.sh
+        ./download_terminus_webclient.sh
         #ls -R "/c/Program Files/Microsoft Visual Studio/2022/"*"/VC/Redist/MSVC/"*
         sed -i 's#Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\VC\\Redist\\MSVC\\v142\\vcredist_x64.exe#'"$(ls -d "/c/Program Files/Microsoft Visual Studio/2022/"*"/VC/Redist/MSVC/v"* | head -n 1 | sed 's#/c/##g' | tr '/' '\\' | sed 's/\\/\\\\/g')\\\\vc_redist.x64.exe#g" bundle/win/Bundle.wxs
         curl -L https://github.com/ninja-build/ninja/releases/download/v1.10.2/ninja-win.zip > ninja.zip
@@ -81,7 +79,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: windows
-        path: ${{ github.workspace }}/build/JellyfinMediaPlayer-*.exe
+        path: ${{ github.workspace }}/build/TerminusMediaPlayer-*.exe
 
   build-win32:
     runs-on: windows-latest
@@ -95,7 +93,7 @@ jobs:
         modules: "qtwebengine"
     - name: Install dependencies
       run: |
-        ./download_webclient.sh
+        ./download_terminus_webclient.sh
         #ls -R "/c/Program Files/Microsoft Visual Studio/2022/"*"/VC/Redist/MSVC/"*
         sed -i 's#Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\VC\\Redist\\MSVC\\v142\\vcredist_x64.exe#'"$(ls -d "/c/Program Files/Microsoft Visual Studio/2022/"*"/VC/Redist/MSVC/v"* | head -n 1 | sed 's#/c/##g' | tr '/' '\\' | sed 's/\\/\\\\/g')\\\\vc_redist.x86.exe#g" bundle/win/Bundle.wxs
         curl -L https://github.com/ninja-build/ninja/releases/download/v1.10.2/ninja-win.zip > ninja.zip
@@ -126,7 +124,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: windows-legacy32
-        path: ${{ github.workspace }}/build/JellyfinMediaPlayer-*.exe
+        path: ${{ github.workspace }}/build/TerminusMediaPlayer-*.exe
 
   build-ubuntu:
     strategy:
